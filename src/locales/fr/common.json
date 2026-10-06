@@ -1,0 +1,65 @@
+{
+  "welcome": "Bienvenue sur notre Plateforme Médicale",
+  "login": "Connexion",
+  "register": "S'inscrire",
+  "create_account": "Créer un compte médical",
+  "join_platform": "Rejoignez notre plateforme de santé",
+  "full_name": "Nom complet",
+  "email_address": "Adresse e-mail",
+  "password": "Mot de passe",
+  "confirm_password": "Confirmer le mot de passe",
+  "phone_optional": "Numéro de téléphone (Optionnel)",
+  "account_type": "Type de compte",
+  "patient": "Patient",
+  "doctor": "Professionnel de santé",
+  "admin": "Administrateur",
+  "sign_in": "Se connecter",
+  "sign_up": "S'inscrire",
+  "forgot_password": "Mot de passe oublié ?",
+  "loading": "Chargement...",
+  "error": {
+    "title": "Erreur",
+    "generic": "Une erreur est survenue. Veuillez réessayer.",
+    "required": "Ce champ est obligatoire",
+    "email_invalid": "Veuillez entrer une adresse e-mail valide",
+    "password_mismatch": "Les mots de passe ne correspondent pas"
+  },
+  "success": {
+    "title": "Succès",
+    "saved": "Modifications enregistrées avec succès"
+  },
+  "buttons": {
+    "submit": "Soumettre",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "dashboard": "Tableau de bord",
+    "appointments": "Rendez-vous",
+    "medical_records": "Dossiers médicaux",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "language": {
+    "en": "Anglais",
+    "fr": "Français",
+    "ar": "Arabe"
+  },
+  "search": {
+    "placeholder": "Rechercher...",
+    "no_results": "Aucun résultat trouvé"
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire",
+    "email": "Veuillez entrer une adresse e-mail valide",
+    "min_length": "Doit contenir au moins {{count}} caractères",
+    "max_length": "Ne doit pas dépasser {{count}} caractères"
+  }
+}

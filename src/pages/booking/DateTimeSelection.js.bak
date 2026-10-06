@@ -1,0 +1,537 @@
+import React, { useMemo, useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { format, parseISO, addDays, isAfter, isToday, isBefore, parse, addMinutes } from 'date-fns';
+import { enUS, fr, ar } from 'date-fns/locale';
+import { 
+  FaChevronLeft, 
+  FaCalendarAlt, 
+  FaClock, 
+  FaMapMarkerAlt,
+  FaInfoCircle,
+  FaChevronRight,
+  FaStethoscope,
+  FaRegCalendarAlt,
+  FaSpinner
+} from 'react-icons/fa';
+import axios from 'axios';
+import './booking.css';
+
+// Map i18n language codes to date-fns locales
+const locales = {
+  en: enUS,
+  fr: fr,
+  ar: ar
+};
+
+function genSlots() {
+  const slots = [];
+  for (let h = 9; h < 18; h++) {
+    if (h !== 12) slots.push(`${h.toString().padStart(2, '0')}:00`);
+  }
+  return slots;
+}
+
+// Get browser's Intl locale
+const getLocale = (locale) => {
+  try {
+    return new Intl.Locale(locale);
+  } catch (e) {
+    return new Intl.Locale('en');
+  }
+};
+
+// Sample services data - in a real app, this would come from an API
+const sampleServices = [
+  { id: 1, name: 'General Consultation', duration: 30, price: 30 },
+  { id: 2, name: 'Dental Checkup', duration: 45, price: 50 },
+  { id: 3, name: 'Eye Examination', duration: 30, price: 40 },
+  { id: 4, name: 'Vaccination', duration: 15, price: 25 },
+];
+
+export default function DateTimeSelection() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { t, i18n } = useTranslation();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState('');
+  const [selectedService, setSelectedService] = useState(null);
+  const [center, setCenter] = useState(location.state?.center || null);
+  const [services, setServices] = useState(sampleServices);
+  const [availableDates, setAvailableDates] = useState([]);
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  // Generate available dates (next 30 days)
+  useEffect(() => {
+    const dates = [];
+    const today = new Date();
+    
+    for (let i = 0; i < 30; i++) {
+      const date = addDays(today, i);
+      dates.push({
+        date,
+        formatted: format(date, 'EEE, MMM d', { locale: locales[i18n.language] || enUS }),
+        day: format(date, 'd'),
+        month: format(date, 'MMM', { locale: locales[i18n.language] || enUS }),
+        isToday: isToday(date)
+      });
+    }
+    
+    setAvailableDates(dates);
+  }, [i18n.language]);
+  
+  // Generate time slots for the selected date
+  useEffect(() => {
+    if (!selectedDate) return;
+    
+    const slots = [];
+    const startHour = 8; // 8 AM
+    const endHour = 18;  // 6 PM
+    const now = new Date();
+    const isTodaySelected = isToday(selectedDate);
+    
+    for (let h = startHour; h < endHour; h++) {
+      // Add full hour slot (e.g., 9:00)
+      const fullHourTime = `${h.toString().padStart(2, '0')}:00`;
+      const fullHourDate = new Date(selectedDate);
+      fullHourDate.setHours(h, 0, 0, 0);
+      
+      const isPast = isTodaySelected && isBefore(fullHourDate, now);
+      
+      slots.push({
+        time: fullHourTime,
+        available: !isPast,
+        isPast
+      });
+      
+      // Add half hour slot (e.g., 9:30)
+      if (h < endHour - 1) {
+        const halfHourTime = `${h.toString().padStart(2, '0')}:30`;
+        const halfHourDate = new Date(selectedDate);
+        halfHourDate.setHours(h, 30, 0, 0);
+        
+        const isPastHalfHour = isTodaySelected && isBefore(halfHourDate, now);
+        
+        slots.push({
+          time: halfHourTime,
+          available: !isPastHalfHour,
+          isPast: isPastHalfHour
+        });
+      }
+    }
+    
+    setAvailableSlots(slots);
+  }, [selectedDate]);
+  
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+    setSelectedTime('');
+  };
+  
+  const handleTimeSelect = (time) => {
+    setSelectedTime(time);
+  };
+  
+  const handleServiceSelect = (service) => {
+    setSelectedService(service.id === selectedService?.id ? null : service);
+  };
+  
+  const handleNext = () => {
+    if (!selectedTime || !selectedService) {
+      setError(t('select_time_and_service') || 'Please select both a time and a service');
+      return;
+    }
+    
+    navigate('/booking/patient-info', {
+      state: {
+        appointmentDetails: {
+          date: format(selectedDate, 'yyyy-MM-dd'),
+          time: selectedTime,
+          service: selectedService,
+          center: center
+        }
+      }
+    });
+  };
+  const [selectedService, setSelectedService] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingServices, setIsLoadingServices] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [availableDates, setAvailableDates] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  
+  // Generate time slots with 30-minute intervals
+  const timeSlots = useMemo(() => {
+    const slots = [];
+    const startHour = 8; // 8 AM
+    const endHour = 20;  // 8 PM
+    
+    for (let h = startHour; h < endHour; h++) {
+      // Add full hour slot
+      slots.push({
+        time: `${h.toString().padStart(2, '0')}:00`,
+        available: true
+      });
+      // Add half hour slot
+      if (h < endHour - 1) {
+        slots.push({
+          time: `${h.toString().padStart(2, '0')}:30`,
+          available: true
+        });
+      }
+    }
+    return slots;
+  }, []);
+  
+  // Generate available dates (next 30 days)
+  useEffect(() => {
+    const dates = [];
+    const today = new Date();
+    
+    for (let i = 0; i < 30; i++) {
+      const date = addDays(today, i);
+      dates.push({
+        date,
+        formatted: format(date, 'EEE, MMM d', { locale: locales[i18n.language] || enUS }),
+        day: format(date, 'd'),
+        month: format(date, 'MMM', { locale: locales[i18n.language] || enUS }),
+        isToday: isToday(date)
+      });
+    }
+    
+    setAvailableDates(dates);
+  }, [i18n.language]);
+  
+  // Check if a time slot is in the past for the selected date
+  const isSlotInPast = (timeStr) => {
+    if (!selectedDate) return false;
+    
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const slotDate = new Date(selectedDate);
+    slotDate.setHours(hours, minutes, 0, 0);
+    
+    return isBefore(slotDate, new Date());
+  };
+  
+  // Generate time slots with 30-minute intervals
+  const slots = useMemo(() => {
+    const baseSlots = [];
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const today = new Date().toISOString().split('T')[0];
+    const isToday = date === today;
+    
+    for (let h = 9; h < 18; h++) {
+      if (h === 12) continue; // Skip lunch time
+      
+      // Generate both :00 and :30 slots for each hour
+      for (const minutes of ['00', '30']) {
+        const slotHour = h;
+        const slotMinutes = parseInt(minutes, 10);
+        const slotTime = `${h.toString().padStart(2, '0')}:${minutes}`;
+        
+        // Check if this time slot is in the past for today
+        let isPastTime = false;
+        if (isToday) {
+          isPastTime = (slotHour < currentHour) || 
+                      (slotHour === currentHour && slotMinutes <= currentMinute);
+        }
+        
+        // Mark as peak time if between 4 PM and 6 PM
+        const isPeak = h >= 16 && h < 18;
+        
+        baseSlots.push({
+          time: slotTime,
+          available: !isPastTime,
+          isPeak
+        });
+      }
+    }
+    return baseSlots;
+  }, [date]);
+
+  // Load selected center from localStorage or location state
+  useEffect(() => {
+    const loadCenter = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        // First try to get from location state
+        const stateCenter = location.state?.prefillData;
+        if (stateCenter?.centerId) {
+          setCenter({
+            id: stateCenter.centerId,
+            name: stateCenter.centerName || 'Centre de santé',
+            address: stateCenter.address
+          });
+          return;
+        }
+
+        // Fallback to localStorage
+        const storedCenter = localStorage.getItem('selectedCenter');
+        if (storedCenter) {
+          const centerData = JSON.parse(storedCenter);
+          setCenter(centerData);
+        } else {
+          throw new Error('No center selected');
+        }
+      } catch (error) {
+        console.error('Error loading center data:', error);
+        setError(t('error_loading_center') || 'Failed to load center information');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCenter();
+  }, [location.state, t]);
+
+  const handleNext = () => {
+    if (!selectedSlot) return;
+    
+    const locale = locales[i18n.language] || enUS;
+    const formattedDate = format(parseISO(date), 'EEEE, MMMM d, yyyy', { locale });
+    
+    const bookingData = {
+      selectedDate: formattedDate,
+      selectedTime: selectedSlot,
+      rawDate: date,
+      rawTime: selectedSlot
+    };
+    
+    // Save to localStorage for persistence
+    localStorage.setItem('selectedDateTime', JSON.stringify(bookingData));
+    
+    // Navigate to patient info with the data
+    navigate('/booking/patient-info', { 
+      state: { 
+        prefillData: bookingData 
+      } 
+    });
+  };
+
+  const handleSelectTime = (slot) => {
+    if (!slot.available) return;
+    setSelectedSlot(slot.time);
+  };
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+  
+  const formatDate = (dateString) => {
+    try {
+      const locale = getLocale(i18n.language);
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat(i18n.language, {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }).format(date);
+    } catch (e) {
+      console.error('Error formatting date:', e);
+      return dateString;
+    }
+  };
+  
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <div className="spinner mx-auto mb-4"></div>
+          <p className="text-gray-600">{t('loading') || 'Loading...'}</p>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-8 text-center">
+        <FaInfoCircle className="text-red-500 text-4xl mx-auto mb-4" />
+        <h2 className="text-xl font-semibold mb-2">{t('error_loading_center') || 'Error Loading Center'}</h2>
+        <p className="text-gray-600 mb-6">{error}</p>
+        <button 
+          onClick={handleBack}
+          className="btn outline"
+        >
+          <FaChevronLeft className="mr-2" />
+          {t('back_to_centers') || 'Back to Centers'}
+
+const handleServiceSelect = (service) => {
+  setSelectedService(service.id === selectedService?.id ? null : service);
+};
+
+const handleDateSelect = (date) => {
+  setSelectedDate(date);
+  setDate(format(date, 'yyyy-MM-dd'));
+  setSelectedSlot(null);
+};
+
+const handleTimeSelect = (time) => {
+  setSelectedSlot(time);
+  setTime(time);
+};
+
+const handleNext = () => {
+  if (!selectedSlot || !selectedService) {
+    setError(t('select_time_and_service') || 'Please select both a time and a service');
+    return;
+  }
+  
+  navigate('/booking/patient-info', {
+    state: {
+      appointmentDetails: {
+        date: format(selectedDate, 'EEEE, MMMM d, yyyy', { locale: locales[i18n.language] }),
+        time: selectedSlot,
+        service: selectedService
+      }
+    }
+  });
+};
+
+if (isLoading) {
+  return (
+    <div className="booking-page">
+      <div className="spinner"></div>
+    </div>
+  );
+}
+
+if (error) {
+  return (
+    <div className="booking-page">
+      <div className="error-message">
+        <p>{error}</p>
+        <button className="btn" onClick={() => window.location.reload()}>
+          {t('try_again') || 'Try Again'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+return (
+  <div className="booking-page">
+    <div className="booking-header">
+      <button 
+        className="btn-icon" 
+        onClick={() => navigate(-1)}
+        aria-label={t('back')}
+      >
+        <FaChevronLeft />
+      </button>
+      <h1>{t('select_date_time') || 'Select Date & Time'}</h1>
+      <p>{t('choose_preferred_time') || 'Choose your preferred date and time for the appointment'}</p>
+    </div>
+
+  {center && (
+    <div className="selected-center">
+      {/* Hospital Info */}
+      {center && (
+        <div className="booking-card">
+          <div className="hospital-info">
+            <h3>{center.name}</h3>
+            <p className="text-muted">
+              <FaMapMarkerAlt /> {center.address}
+            </p>
+          </div>
+        </div>
+      )}
+      
+      {/* Service Selection */}
+      <div className="booking-card">
+        <h2><FaStethoscope /> {t('select_service') || 'Select Service'}</h2>
+        <div className="services-grid">
+          {services.map((service) => (
+            <div
+              key={service.id}
+              className={`service-card ${selectedService?.id === service.id ? 'selected' : ''}`}
+              onClick={() => handleServiceSelect(service)}
+            >
+              <h4>{service.name}</h4>
+              <div className="service-details">
+                {service.duration && (
+                  <span className="duration">{service.duration} min</span>
+                )}
+                {service.price && (
+                  <span className="price">{service.price} TND</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Date Selection */}
+      <div className="booking-card">
+        <h2><FaRegCalendarAlt /> {t('select_date') || 'Select Date'}</h2>
+        <div className="date-picker">
+          {availableDates.map((dateItem, index) => (
+            <button
+              key={index}
+              className={`date-option ${
+                format(selectedDate, 'yyyy-MM-dd') === format(dateItem.date, 'yyyy-MM-dd') ? 'selected' : ''
+              } ${dateItem.isToday ? 'today' : ''}`}
+              onClick={() => handleDateSelect(dateItem.date)}
+            >
+              <span className="day">{dateItem.formatted.split(',')[0]}</span>
+              <span className="date">{dateItem.day}</span>
+              <span className="month">{dateItem.month}</span>
+              {dateItem.isToday && <span className="today-badge">Today</span>}
+            </button>
+          ))}
+        </div>
+      </div>
+        
+        {/* Time Slot Selection */}
+        <div className="booking-card">
+          <h2><FaClock /> {t('select_time') || 'Select Time'}</h2>
+          <div className="time-slots">
+            {availableSlots.map((slot, index) => (
+              <button
+                key={index}
+                className={`time-slot ${!slot.available ? 'unavailable' : ''} ${selectedTime === slot.time ? 'selected' : ''}`}
+                onClick={() => slot.available && handleTimeSelect(slot.time)}
+                disabled={!slot.available}
+                title={slot.isPast ? 'This time slot has passed' : !slot.available ? 'Not available' : ''}
+              >
+                {slot.time}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
+    
+    {/* Error Message */}
+    {error && (
+      <div className="error-message">
+        <FaInfoCircle /> {error}
+      </div>
+    )}
+    
+    {/* Navigation Buttons */}
+    <div className="actions">
+      <button 
+        className="btn secondary" 
+        onClick={() => navigate(-1)}
+      >
+        {t('back') || 'Back'}
+      </button>
+      <button 
+        className="btn primary" 
+        onClick={handleNext}
+        disabled={!selectedTime || !selectedService}
+      >
+        {t('continue') || 'Continue'}
+      </button>
+    </div>
+  </div>
+);

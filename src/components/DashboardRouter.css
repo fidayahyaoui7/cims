@@ -1,0 +1,12 @@
+.dashboard-router-container {
+  padding: var(--space-5);
+  background-color: var(--neutral-100);
+  min-height: 100vh;
+}
+
+/* 
+  The DashboardRouter component will be simplified to just render the correct dashboard,
+  so the user type selector styles are no longer needed.
+  The dashboard content itself is styled within its own component's CSS.
+*/
+

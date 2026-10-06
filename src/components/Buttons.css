@@ -1,0 +1,113 @@
+.btn {
+  display: inline-block;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--border-radius-medium);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition-medium);
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-small);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.btn:disabled {
+  background-color: var(--border-color);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--text-on-primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--primary-color-dark);
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: var(--text-on-primary);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--secondary-color-dark);
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  color: var(--text-on-primary);
+}
+
+.btn-success:hover:not(:disabled) {
+  background-color: var(--success-color-dark);
+}
+
+.btn-danger {
+  background-color: var(--error-color);
+  color: var(--text-on-primary);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--error-color-dark);
+}
+
+.btn-warning {
+  background-color: var(--accent-color);
+  color: var(--text-primary);
+}
+
+.btn-warning:hover:not(:disabled) {
+  background-color: var(--accent-color-dark);
+}
+
+.btn-info {
+  background-color: var(--info-color);
+  color: var(--text-on-primary);
+}
+
+.btn-info:hover:not(:disabled) {
+  background-color: var(--info-color-dark);
+}
+
+.btn-light {
+  background-color: var(--surface-color-dark);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.btn-light:hover:not(:disabled) {
+  background-color: var(--border-color);
+}
+
+.btn-dark {
+  background-color: var(--text-primary);
+  color: var(--text-on-primary);
+}
+
+.btn-dark:hover:not(:disabled) {
+  background-color: var(--text-primary);
+  filter: brightness(1.2);
+}
+
+.btn-link {
+  background-color: transparent;
+  color: var(--primary-color);
+  text-decoration: underline;
+  box-shadow: none;
+  padding: 0;
+}
+
+.btn-link:hover {
+  color: var(--primary-color-dark);
+  transform: none;
+  box-shadow: none;
+}

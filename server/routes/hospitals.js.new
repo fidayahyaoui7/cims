@@ -1,0 +1,288 @@
+const express = require('express');
+const router = express.Router();
+const { query } = require('../database/db');
+
+// Get all hospitals with filtering, sorting, and pagination
+router.get('/', async (req, res) => {
+  try {
+    const {
+      city,
+      type,
+      service,
+      search,
+      sortBy = 'name',
+      sortOrder = 'asc',
+      page = 1,
+      limit = 20
+    } = req.query;
+
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+    const where = [];
+    const params = [];
+    let paramIndex = 1;
+
+    // Build WHERE clause
+    if (city) {
+      params.push(city);
+      where.push(`c.name = $${paramIndex++}`);
+    }
+    if (type) {
+      params.push(type);
+      where.push(`h.type = $${paramIndex++}`);
+    }
+    if (service) {
+      params.push(service);
+      where.push(`s.name = $${paramIndex++}`);
+    }
+    if (search) {
+      params.push(`%${search}%`, `%${search}%`);
+      where.push(`(h.name ILIKE $${paramIndex++} OR h.address ILIKE $${paramIndex++})`);
+    }
+
+    const whereClause = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    const sortField = ['name', 'type', 'city', 'created_at'].includes(sortBy) ? sortBy : 'name';
+    const sortDir = sortOrder === 'desc' ? 'DESC' : 'ASC';
+
+    // Main query to get paginated results
+    const dataQuery = `
+      SELECT 
+        h.id,
+        h.name,
+        h.type,
+        h.address,
+        h.phone,
+        h.email,
+        h.website,
+        h.latitude,
+        h.longitude,
+        h.description,
+        h.image_url,
+        h.created_at,
+        h.updated_at,
+        c.name as city,
+        c.region,
+        c.country,
+        array_remove(array_agg(DISTINCT s.name), NULL) as services
+      FROM hospitals h
+      LEFT JOIN cities c ON h.city_id = c.id
+      LEFT JOIN hospital_services hs ON h.id = hs.hospital_id
+      LEFT JOIN services s ON hs.service_id = s.id
+      ${whereClause}
+      GROUP BY h.id, c.id
+      ORDER BY ${sortField} ${sortDir}
+      LIMIT $${paramIndex++} OFFSET $${paramIndex++}
+    `;
+
+    // Count query for pagination
+    const countQuery = `
+      SELECT COUNT(DISTINCT h.id) as total
+      FROM hospitals h
+      LEFT JOIN cities c ON h.city_id = c.id
+      LEFT JOIN hospital_services hs ON h.id = hs.hospital_id
+      LEFT JOIN services s ON hs.service_id = s.id
+      ${whereClause}
+    `;
+
+    // Execute queries
+    const [dataResult, countResult] = await Promise.all([
+      query(dataQuery, [...params, parseInt(limit), offset]),
+      query(countQuery, params)
+    ]);
+
+    const total = parseInt(countResult.rows[0]?.total || 0);
+    const totalPages = Math.ceil(total / limit);
+
+    res.json({
+      data: dataResult.rows,
+      pagination: {
+        total,
+        totalPages,
+        currentPage: parseInt(page),
+        limit: parseInt(limit),
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching hospitals:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Failed to fetch hospitals',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// Get hospital by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const result = await query(
+      `SELECT 
+        h.*, 
+        c.name as city_name,
+        c.region,
+        c.country,
+        array_remove(array_agg(DISTINCT s.name), NULL) as services,
+        array_remove(array_agg(
+          DISTINCT jsonb_build_object(
+            'id', d.id,
+            'name', d.name,
+            'speciality', d.speciality,
+            'license_number', d.license_number,
+            'available_hours', d.available_hours,
+            'phone', d.phone,
+            'email', d.email
+          )
+        ) FILTER (WHERE d.id IS NOT NULL), NULL) as doctors
+      FROM hospitals h
+      LEFT JOIN cities c ON h.city_id = c.id
+      LEFT JOIN hospital_services hs ON h.id = hs.hospital_id
+      LEFT JOIN services s ON hs.service_id = s.id
+      LEFT JOIN doctors d ON h.id = d.hospital_id
+      WHERE h.id = $1
+      GROUP BY h.id, c.id`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ 
+        status: 'error', 
+        message: 'Hospital not found' 
+      });
+    }
+
+    // Format the response
+    const hospital = {
+      ...result.rows[0],
+      services: result.rows[0].services || [],
+      doctors: result.rows[0].doctors || []
+    };
+
+    res.json(hospital);
+  } catch (error) {
+    console.error(`Error fetching hospital ${req.params.id}:`, error);
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Failed to fetch hospital',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// Get all hospital types
+router.get('/types', async (req, res) => {
+  try {
+    const result = await query(
+      'SELECT DISTINCT type FROM hospitals WHERE type IS NOT NULL ORDER BY type ASC'
+    );
+    res.json(result.rows.map(r => r.type));
+  } catch (error) {
+    console.error('Error fetching hospital types:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Failed to fetch hospital types',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// Get all services with counts
+router.get('/services/all', async (req, res) => {
+  try {
+    const result = await query(`
+      SELECT 
+        s.id,
+        s.name,
+        s.description,
+        COUNT(hs.hospital_id) as hospital_count
+      FROM services s
+      LEFT JOIN hospital_services hs ON s.id = hs.service_id
+      GROUP BY s.id, s.name, s.description
+      ORDER BY s.name ASC
+    `);
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching services:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Failed to fetch services',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// Get all cities with hospitals
+router.get('/cities', async (req, res) => {
+  try {
+    const result = await query(`
+      SELECT 
+        c.id,
+        c.name,
+        c.region,
+        c.country,
+        COUNT(h.id) as hospital_count
+      FROM cities c
+      LEFT JOIN hospitals h ON c.id = h.city_id
+      GROUP BY c.id, c.name, c.region, c.country
+      HAVING COUNT(h.id) > 0
+      ORDER BY c.name ASC
+    `);
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching cities:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Failed to fetch cities',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// Search hospitals by name or address
+router.get('/search', async (req, res) => {
+  try {
+    const { query } = req.query;
+    
+    if (!query || query.trim().length < 2) {
+      return res.status(400).json({ 
+        status: 'error', 
+        message: 'Search query must be at least 2 characters long' 
+      });
+    }
+
+    const searchTerm = `%${query}%`;
+    const result = await query(
+      `SELECT 
+        h.id,
+        h.name,
+        h.type,
+        h.address,
+        h.phone,
+        c.name as city,
+        c.region
+      FROM hospitals h
+      JOIN cities c ON h.city_id = c.id
+      WHERE h.name ILIKE $1 
+         OR h.address ILIKE $1
+         OR c.name ILIKE $1
+      ORDER BY h.name ASC
+      LIMIT 50`,
+      [searchTerm]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error searching hospitals:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Failed to search hospitals',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+module.exports = router;

@@ -1,0 +1,252 @@
+/* Main Container */
+.search-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Search Form */
+.search-form {
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.filter-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #3182ce;
+  box-shadow: 0 0 0 1px #3182ce;
+}
+
+.search-button {
+  background-color: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.search-button:hover {
+  background-color: #2c5282;
+}
+
+.search-button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.search-icon {
+  font-size: 1rem;
+}
+
+/* Map Container */
+.map-container {
+  height: 500px;
+  width: 100%;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+/* Hospital List */
+.hospitals-list {
+  margin-top: 2rem;
+}
+
+.hospitals-list h3 {
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+}
+
+/* Hospital Card */
+.hospital-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.hospital-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.hospital-card-header {
+  background-color: #3182ce;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hospital-icon {
+  font-size: 1.5rem;
+}
+
+.hospital-name {
+  font-weight: 600;
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.hospital-details {
+  padding: 1.25rem;
+}
+
+.hospital-address,
+.hospital-phone {
+  margin: 0.5rem 0;
+  color: #4a5568;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hospital-services {
+  margin-top: 1rem;
+}
+
+.services-label {
+  display: block;
+  font-size: 0.875rem;
+  color: #718096;
+  margin-bottom: 0.5rem;
+}
+
+.services-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.service-tag {
+  background-color: #ebf8ff;
+  color: #2b6cb0;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+}
+
+.more-tag {
+  background-color: #e2e8f0;
+  color: #4a5568;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+/* Popup Styles */
+.hospital-popup {
+  min-width: 200px;
+  padding: 0.5rem;
+}
+
+.hospital-popup h4 {
+  margin: 0 0 0.25rem 0;
+  color: #2d3748;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .search-filters {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .filter-group {
+    width: 100%;
+  }
+  
+  .search-button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .map-container {
+    height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-container {
+    padding: 1rem;
+  }
+  
+  .search-form {
+    padding: 1rem;
+  }
+  
+  .map-container {
+    height: 300px;
+  }
+}
+.search-button {
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Clear button */
+.clear-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a0aec0;
+  transition: color 0.2s;
+}
+
+.clear-button:hover {
+  color: #718096;
+}

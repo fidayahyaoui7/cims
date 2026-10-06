@@ -1,0 +1,213 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { citiesAPI } from './services/api';
+import { logoutUser, getCurrentUser } from './services/authService';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './HomePage.css';
+import Button from './components/common/Button';
+
+// Region data with icons and colors
+const regions = [
+  { id: 'all', name: 'all' },
+  { id: 'north', name: 'north' },
+  { id: 'central', name: 'central' },
+  { id: 'south', name: 'south' },
+];
+
+const HomePage = () => {
+  const { t, i18n } = useTranslation();
+  const [selectedRegion, setSelectedRegion] = useState('all');
+  const [cities, setCities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+  const isRTL = i18n.language === 'ar';
+
+  const loadCities = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await citiesAPI.getAll(selectedRegion === 'all' ? '' : selectedRegion);
+      setCities(response.cities || []);
+    } catch (err) {
+      console.error('Error loading cities:', err);
+      const errorMessage = err.response?.data?.message || t('error_load_cities');
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedRegion, t]);
+
+  // Load initial data
+  useEffect(() => {
+    const loadInitialData = async () => {
+      try {
+        const currentUser = getCurrentUser();
+        if (currentUser) {
+          setUser(currentUser);
+        }
+        await loadCities();
+      } catch (err) {
+        console.error('Error in initial data load:', err);
+        setError(t('error_loading_data'));
+      }
+    };
+
+    loadInitialData();
+  }, [loadCities, t]);
+
+  const handleCityClick = (city) => {
+    const slug = city.name.toLowerCase().replace(/\s+/g, '-');
+    navigate(`/city/${slug}`, { state: { cityId: city.id } });
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      setUser(null);
+      toast.success(t('logout_success'));
+      navigate('/');
+    } catch (err) {
+      console.error('Logout error:', err);
+      toast.error(t('logout_error'));
+    }
+  };
+
+  // Filter cities based on search query
+  const filteredCities = cities.filter(city => 
+    city.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    city.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Get region name with icon
+  const getRegionIcon = (region) => {
+    const regionData = regions.find(r => r.id === region);
+    return regionData ? regionData.icon : '📍';
+  };
+
+  if (loading) {
+    return (
+      <div className="homepage">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>{t('loading_cities')}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="homepage">
+      <main className="main-content container py-5">
+        {/* Region Filter */}
+        <div className="filter-section">
+          <h2>{t('select_region')}</h2>
+          <div className="filter-buttons flex flex-wrap gap-2">
+            {regions.map(region => (
+              <Button
+                key={region.id}
+                variant={selectedRegion === region.id ? 'primary' : 'secondary'}
+                size="sm"
+                onClick={() => setSelectedRegion(region.id)}
+                className="capitalize"
+              >
+                {t(`region_${region.id}`)}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="alert alert-danger text-center mb-4">
+            {error}
+            <Button 
+              variant="link" 
+              onClick={loadCities}
+              className="ml-2 p-0"
+            >
+              {t('try_again')}
+            </Button>
+          </div>
+        )}
+
+        {/* Cities Grid */}
+        {filteredCities.length > 0 ? (
+          <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {filteredCities.map((city, index) => (
+              <div key={city.id || index} className="col">
+                <div 
+                  className="card h-100 city-card shadow-sm" 
+                  onClick={() => handleCityClick(city)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && handleCityClick(city)}
+                >
+                  <div className="card-body">
+                    <div className="d-flex align-items-center mb-3">
+                      <span className="city-icon me-2" role="img" aria-label={t(`region_${city.region}`)}>
+                        {getRegionIcon(city.region)}
+                      </span>
+                      <h3 className="card-title h5 mb-0">{city.name}</h3>
+                    </div>
+                    <p className="card-text text-muted">
+                      {city.description || t('no_description_available')}
+                    </p>
+                    <div className="d-flex justify-content-between align-items-center mt-auto">
+                      <span className="badge bg-primary">
+                        {t(`region_${city.region}`)}
+                      </span>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="items-center gap-1"
+                      >
+                        {t('view_centers')}
+                        <span>→</span>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-5">
+            <i className="bi bi-inbox fs-1 text-muted mb-3 d-block"></i>
+            <h3>{t('no_cities_found')}</h3>
+            <p className="text-muted">
+              {searchQuery 
+                ? t('no_cities_match_search', { query: searchQuery })
+                : t('no_cities_available')}
+            </p>
+            {searchQuery && (
+              <Button 
+                variant="outline"
+                onClick={() => setSearchQuery('')}
+                className="mt-3"
+              >
+                {t('clear_search')}
+              </Button>
+            )}
+          </div>
+        )}
+      </main>
+      
+      {/* Footer */}
+      <footer className="bg-light py-4 mt-5">
+        <div className="container text-center">
+          <p className="mb-0 text-muted">
+            &copy; {new Date().getFullYear()} {t('app_name')}. {t('all_rights_reserved')}.
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default HomePage;

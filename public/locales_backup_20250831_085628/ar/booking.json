@@ -1,0 +1,80 @@
+{
+  "booking": {
+    "title": "حجز موعد",
+    "subtitle": "قم بحجز موعدك الطبي في بضع خطوات بسيطة",
+    "steps": {
+      "type": "النوع",
+      "region": "المنطقة",
+      "datetime": "التاريخ والوقت",
+      "info": "معلوماتك",
+      "confirm": "التأكيد"
+    },
+    "typeSelection": {
+      "title": "اختر نوع الفحص",
+      "subtitle": "اختر نوع الفحص الذي تحتاجه",
+      "radiology": "أشعة",
+      "mri": "رنين مغناطيسي",
+      "ct": "أشعة مقطعية",
+      "ultrasound": "موجات فوق صوتية",
+      "xray": "أشعة سينية",
+      "mammography": "ماموجرام",
+      "other": "أخرى"
+    },
+    "regionSelection": {
+      "title": "اختر المنطقة",
+      "subtitle": "اختر منطقتك المفضلة",
+      "search": "ابحث باسم المدينة أو المستشفى...",
+      "selectRegion": "اختر منطقة",
+      "hospitalsIn": "المستشفيات في",
+      "noHospitals": "لا توجد مستشفيات في هذه المنطقة",
+      "selectHospital": "اختر المستشفى",
+      "backToRegions": "العودة إلى المناطق"
+    },
+    "datetimeSelection": {
+      "title": "اختر التاريخ والوقت",
+      "subtitle": "اختر التاريخ والوقت المناسبين لك",
+      "selectDate": "اختر تاريخاً",
+      "selectTime": "اختر وقتاً",
+      "availableSlots": "المواعيد المتاحة",
+      "noSlots": "لا توجد مواعيد متاحة في هذا التاريخ",
+      "loading": "جاري تحميل المواعيد المتاحة..."
+    },
+    "patientInfo": {
+      "title": "معلوماتك",
+      "subtitle": "الرجاء إدخال بياناتك لإتمام الحجز",
+      "fullName": "الاسم الكامل",
+      "phone": "رقم الهاتف",
+      "email": "البريد الإلكتروني",
+      "notes": "ملاحظات إضافية (اختياري)",
+      "notesPlaceholder": "أي متطلبات خاصة أو ملاحظات للطبيب...",
+      "requiredField": "هذا الحقل مطلوب",
+      "invalidEmail": "الرجاء إدخال بريد إلكتروني صحيح",
+      "invalidPhone": "الرجاء إدخال رقم هاتف صحيح"
+    },
+    "confirmation": {
+      "title": "تم تأكيد الموعد!",
+      "subtitle": "تم جدولة موعدك بنجاح",
+      "appointmentDetails": "تفاصيل الموعد",
+      "examinationType": "نوع الفحص",
+      "hospital": "المستشفى",
+      "dateTime": "التاريخ والوقت",
+      "yourInfo": "معلوماتك",
+      "fullName": "الاسم الكامل",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "notes": "ملاحظات",
+      "print": "طباعة",
+      "viewAppointments": "عرض مواعيدي",
+      "backToHome": "العودة للصفحة الرئيسية",
+      "confirmationEmail": "تم إرسال بريد تأكيد إلى",
+      "thankYou": "شكراً لاختيارك لخدماتنا!"
+    },
+    "buttons": {
+      "next": "التالي",
+      "back": "السابق",
+      "confirm": "تأكيد الحجز",
+      "cancel": "إلغاء",
+      "bookNow": "احجز الآن"
+    }
+  }
+}

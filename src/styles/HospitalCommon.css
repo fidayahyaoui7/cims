@@ -1,0 +1,235 @@
+/* Common Hospital Styles */
+.hospital-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* Header */
+.hospital-header {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.hospital-header h1 {
+  margin: 0 0 0.5rem 0;
+  color: #1a202c;
+  font-size: 1.875rem;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-left: 1rem;
+}
+
+.status-open {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-closed {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Info Sections */
+.hospital-section {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.hospital-section h2 {
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+  color: #2d3748;
+  font-size: 1.5rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+}
+
+/* Info Items */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #4a5568;
+  min-width: 120px;
+}
+
+.info-value {
+  color: #2d3748;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  border: none;
+  margin-right: 0.75rem;
+  margin-bottom: 0.75rem;
+  gap: 0.5rem;
+}
+
+/* Review Button Specific */
+.btn-review {
+  background-color: #f59e0b;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-review:hover {
+  background-color: #d97706;
+  transform: translateY(-1px);
+}
+
+/* Review Modal */
+.review-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.review-modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.review-modal h3 {
+  margin-top: 0;
+  color: #1a202c;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.star {
+  font-size: 1.5rem;
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.star.filled {
+  color: #f59e0b;
+}
+
+.review-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  margin: 1rem 0;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.review-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #2d3748;
+}
+
+.btn-outline:hover {
+  background-color: #f8fafc;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hospital-container {
+    padding: 1rem;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .btn {
+    width: 100%;
+    margin-right: 0;
+  }
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+/* Error State */
+.error-message {
+  background: #fef2f2;
+  color: #991b1b;
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  text-align: center;
+}

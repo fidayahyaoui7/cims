@@ -1,0 +1,65 @@
+{
+  "welcome": "Welcome to our Medical Platform",
+  "login": "Login",
+  "register": "Register",
+  "create_account": "Create Medical Account",
+  "join_platform": "Join our healthcare platform",
+  "full_name": "Full Name",
+  "email_address": "Email Address",
+  "password": "Password",
+  "confirm_password": "Confirm Password",
+  "phone_optional": "Phone Number (Optional)",
+  "account_type": "Account Type",
+  "patient": "Patient",
+  "doctor": "Medical Professional",
+  "admin": "Administrator",
+  "sign_in": "Sign In",
+  "sign_up": "Sign Up",
+  "forgot_password": "Forgot password?",
+  "loading": "Loading...",
+  "error": {
+    "title": "Error",
+    "generic": "An error occurred. Please try again.",
+    "required": "This field is required",
+    "email_invalid": "Please enter a valid email address",
+    "password_mismatch": "Passwords do not match"
+  },
+  "success": {
+    "title": "Success",
+    "saved": "Changes saved successfully"
+  },
+  "buttons": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous"
+  },
+  "navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "appointments": "Appointments",
+    "medical_records": "Medical Records",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "language": {
+    "en": "English",
+    "fr": "French",
+    "ar": "العربية"
+  },
+  "search": {
+    "placeholder": "Search...",
+    "no_results": "No results found"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email address",
+    "min_length": "Must be at least {{count}} characters",
+    "max_length": "Cannot exceed {{count}} characters"
+  }
+}

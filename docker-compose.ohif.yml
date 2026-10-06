@@ -1,0 +1,21 @@
+services:
+  orthanc:
+    image: osimis/orthanc
+    ports:
+      - "8042:8042"
+    environment:
+      ORTHANC__Name: "Orthanc"
+      ORTHANC__AuthenticationEnabled: "false"
+      DICOM_WEB__Enable: "true"
+      DICOM_WEB__Root: "/dicom-web/"
+    volumes:
+      - ./orthanc:/var/lib/orthanc/db
+
+  ohif:
+    image: ohif/viewer:v3.7.0
+    ports:
+      - "3001:80"
+    environment:
+      - APP_CONFIG=/etc/config/default.js
+    volumes:
+      - ./ohif-config.js:/etc/config/default.js:ro

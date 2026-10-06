@@ -1,0 +1,99 @@
+{
+  "title": "Hôpitaux Publics et Régionaux Tunisiens",
+  "subtitle": "Trouvez et réservez des rendez-vous dans les hôpitaux publics et régionaux à travers la Tunisie",
+  "search_placeholder": "Rechercher des hôpitaux par nom, ville ou adresse...",
+  "all_regions": "Toutes les régions",
+  "select_region": "Sélectionner une région",
+  "select_city": "Sélectionner une ville",
+  "no_hospitals_found": "Aucun hôpital trouvé correspondant à votre recherche",
+  "clear_filters": "Effacer les filtres",
+  "view_details": "Voir les détails",
+  "book_appointment": "Prendre rendez-vous",
+  "contact": "Contact",
+  "address": "Adresse",
+  "distance": "Distance",
+  "type": "Type",
+  "opening_hours": "Heures d'ouverture",
+  "open_now": "Ouvert maintenant",
+  "closed_now": "Fermé maintenant",
+  "services": "Services",
+  "facilities": "Équipements",
+  "hospitals": {
+    "mongi_slim": {
+      "name": "Hôpital Universitaire Mongi Slim",
+      "type": "Public",
+      "address": "Avenue Mongi Slim, La Marsa 2078",
+      "services_offered": [
+        "Radiographie (X-ray)",
+        "Scanner (CT)",
+        "IRM",
+        "Échographie",
+        "Mammographie"
+      ],
+      "about": "Hôpital universitaire spécialisé en traumatologie et grands brûlés, disposant d'un service de radiologie médicale.",
+      "working_hours": "24/7 pour les urgences"
+    }
+  },
+  "insurance": "Assurances acceptées",
+  "get_directions": "Itinéraire",
+  "call_now": "Appeler maintenant",
+  "no_services": "Aucun service disponible",
+  "no_facilities": "Aucune information sur les équipements disponible",
+  "no_insurance": "Aucune information sur les assurances disponible",
+  "pagination": {
+    "showing": "Affichage",
+    "of": "sur",
+    "previous": "Précédent",
+    "next": "Suivant"
+  },
+  "center_detail": {
+    "back_to_results": "Retour aux résultats",
+    "contact_info": "Coordonnées",
+    "opening_hours": "Heures d'ouverture",
+    "services": "Services médicaux",
+    "facilities": "Équipements et services",
+    "about": "À propos de cet établissement",
+    "emergency": "Services d'urgence",
+    "available": "Disponible",
+    "not_available": "Non disponible",
+    "view_all_services": "Voir tous les services",
+    "hide_services": "Masquer les services",
+    "book_appointment": "Prendre rendez-vous",
+    "get_directions": "Itinéraire",
+    "call_center": "Centre d'appels",
+    "email": "Email",
+    "website": "Site web",
+    "address": "Adresse",
+    "phone": "Téléphone",
+    "opening_hours_title": "Heures d'ouverture",
+    "emergency_24_7": "Urgences 24/7",
+    "monday_friday": "Lundi - Vendredi",
+    "saturday": "Samedi",
+    "sunday": "Dimanche",
+    "closed": "Fermé",
+    "special_notes": "Notes spéciales",
+    "no_special_notes": "Aucune note spéciale disponible",
+    "services_offered": "Services proposés",
+    "all_services": "Tous les services",
+    "facilities_available": "Équipements disponibles",
+    "parking_available": "Parking disponible",
+    "wheelchair_accessible": "Accès handicapé",
+    "emergency_services": "Services d'urgence"
+  },
+  "types": {
+    "public": "Hôpital Public",
+    "university": "Centre Hospitalo-Universitaire (CHU)",
+    "regional": "Hôpital Régional",
+    "private": "Clinique Privée"
+  },
+  "regions": {
+    "all": "Toute la Tunisie",
+    "north": "Nord",
+    "central": "Centre",
+    "south": "Sud"
+  },
+  "overview": {
+    "title": "Système de Santé en Tunisie",
+    "description": "La Tunisie dispose d'un système bien structuré d'hôpitaux publics offrant des services d'imagerie médicale et de radiologie. Les hôpitaux sont classés en hôpitaux de district, hôpitaux régionaux et centres hospitalo-universitaires (CHU)."
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "welcome": "مرحباً بكم في منصتنا الطبية",
+  "login": "تسجيل الدخول",
+  "register": "تسجيل",
+  "create_account": "إنشاء حساب طبي",
+  "join_platform": "انضم إلى منصة الرعاية الصحية",
+  "full_name": "الاسم الكامل",
+  "email_address": "البريد الإلكتروني",
+  "password": "كلمة المرور",
+  "confirm_password": "تأكيد كلمة المرور",
+  "phone_optional": "رقم الهاتف (اختياري)",
+  "account_type": "نوع الحساب",
+  "patient": "مريض",
+  "doctor": "أخصائي طبي",
+  "admin": "مدير",
+  "sign_in": "تسجيل الدخول",
+  "sign_up": "إنشاء حساب",
+  "forgot_password": "هل نسيت كلمة المرور؟",
+  "loading": "جاري التحميل...",
+  "error": {
+    "title": "خطأ",
+    "generic": "حدث خطأ. يرجى المحاولة مرة أخرى.",
+    "required": "هذا الحقل مطلوب",
+    "email_invalid": "الرجاء إدخال بريد إلكتروني صحيح",
+    "password_mismatch": "كلمتا المرور غير متطابقتين"
+  },
+  "success": {
+    "title": "تم بنجاح",
+    "saved": "تم الحفظ بنجاح"
+  },
+  "buttons": {
+    "submit": "إرسال",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق"
+  },
+  "navigation": {
+    "home": "الرئيسية",
+    "dashboard": "لوحة التحكم",
+    "appointments": "المواعيد",
+    "medical_records": "السجلات الطبية",
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات",
+    "logout": "تسجيل الخروج"
+  },
+  "language": {
+    "en": "الإنجليزية",
+    "fr": "الفرنسية",
+    "ar": "العربية"
+  },
+  "search": {
+    "placeholder": "بحث...",
+    "no_results": "لا توجد نتائج"
+  },
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "email": "الرجاء إدخال بريد إلكتروني صالح",
+    "min_length": "يجب أن يكون {{count}} أحرف على الأقل",
+    "max_length": "لا يمكن أن يتجاوز {{count}} حرف"
+  },
+  "rtl": true
+}

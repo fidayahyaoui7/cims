@@ -1,0 +1,451 @@
+import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { format, addDays } from 'date-fns';
+import { enUS, ar } from 'date-fns/locale';
+
+import { centersAPI, usersAPI, appointmentsAPI } from './services/api';
+import './AppointmentPage.css';
+
+
+const AppointmentPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { t, i18n } = useTranslation();
+
+  // UI State
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [isBooking, setIsBooking] = useState(false);
+  const [error, setError] = useState(null);
+  const [notes, setNotes] = useState('');
+
+  // Data states
+  const [centers, setCenters] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [availableSlots, setAvailableSlots] = useState([]);
+
+  // Selection states
+  const [selectedCenter, setSelectedCenter] = useState(null);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState('');
+  const [user, setUser] = useState(null);
+
+  // Check if date is a weekday
+  const isWeekday = (date) => {
+    const day = date.getDay();
+    return day !== 0 && day !== 6; // Exclude weekends
+  };
+
+  const fetchCenters = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await centersAPI.getAll();
+      setCenters(response.centers || []);
+    } catch (err) {
+      setError(t('error_loading_centers'));
+      console.error('Error fetching centers:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [t]);
+
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem('user');
+    if (loggedInUser) {
+      try {
+        const userData = JSON.parse(loggedInUser);
+        setUser(userData);
+        fetchCenters();
+      } catch (e) {
+        console.error('Failed to parse user from localStorage', e);
+        navigate('/login', { state: { message: t('session_expired') } });
+      }
+    } else {
+      navigate('/login', { state: { message: t('login_required') } });
+    }
+  }, [navigate, t, fetchCenters]);
+
+  const resetSelections = (fromStep) => {
+    if (fromStep <= 4) setSelectedTime('');
+    if (fromStep <= 3) {
+      setSelectedDate('');
+      setAvailableSlots([]);
+    }
+    if (fromStep <= 2) {
+      setSelectedDoctor(null);
+    }
+    if (fromStep <= 1) {
+      setSelectedCenter(null);
+      setDoctors([]);
+    }
+  };
+
+  const handleStepBack = (targetStep) => {
+    resetSelections(targetStep);
+    setStep(targetStep);
+    setError(null); // Clear any previous errors
+  };
+
+  // Fetch doctors for a given center with retry logic
+  const fetchDoctors = useCallback(async (center, retryCount = 0) => {
+    const MAX_RETRIES = 2;
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await usersAPI.getDoctorsByCenter(center.id);
+      if (!response.doctors || response.doctors.length === 0) {
+        throw new Error(t('no_doctors_available'));
+      }
+      setDoctors(response.doctors);
+      setSelectedCenter(center);
+      setStep(2);
+    } catch (err) {
+      if (retryCount < MAX_RETRIES) {
+        const delay = 1000 * (retryCount + 1);
+        setTimeout(() => fetchDoctors(center, retryCount + 1), delay);
+        return;
+      }
+      setError(err.message || t('error_loading_doctors'));
+      setStep(1);
+    } finally {
+      setLoading(false);
+    }
+  }, [t]);
+
+  const fetchAvailableSlots = async () => {
+    if (!selectedDoctor || !selectedDate) return;
+    
+    try {
+      setLoading(true);
+      const dateStr = format(selectedDate, 'yyyy-MM-dd');
+      const response = await appointmentsAPI.getAvailableSlots(selectedDoctor.id, dateStr);
+      setAvailableSlots(response.slots || []);
+      setStep(4);
+    } catch (err) {
+      setError(t('error_loading_slots'));
+      console.error('Error fetching available slots:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial data loading logic
+  useEffect(() => {
+    const preselectedCenterId = location.state?.centerId;
+
+    const initialize = async () => {
+      setLoading(true);
+      if (preselectedCenterId) {
+        try {
+          const res = await centersAPI.getById(preselectedCenterId);
+          if (res.center) {
+            fetchDoctors(res.center);
+          } else {
+            throw new Error('Center not found');
+          }
+        } catch (err) {
+          setError('Failed to load pre-selected center. Please select a center manually.');
+          setStep(1);
+          setLoading(false);
+        }
+      } else {
+        // Default flow: load all centers
+        try {
+          const response = await centersAPI.getAll(); 
+          setCenters(response.centers || []);
+        } catch (err) {
+          setError('Failed to load medical centers.');
+        }
+        setLoading(false);
+      }
+    };
+
+    initialize();
+  }, [location.state, fetchDoctors]);
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    setSelectedTime('');
+    setAvailableSlots([]);
+  };
+
+  const handleBooking = async () => {
+    if (!selectedDoctor || !selectedDate || !selectedTime) return;
+    
+    try {
+      setIsBooking(true);
+      const appointmentData = {
+        doctorId: selectedDoctor.id,
+        centerId: selectedCenter.id,
+        date: format(selectedDate, 'yyyy-MM-dd'),
+        time: selectedTime,
+        notes: notes.trim()
+      };
+      
+      await appointmentsAPI.bookAppointment(appointmentData);
+      navigate('/appointments', { 
+        state: { 
+          success: true, 
+          message: t('appointment_booked_successfully') 
+        } 
+      });
+    } catch (err) {
+      setError(err.message || t('error_booking_appointment'));
+      console.error('Error booking appointment:', err);
+    } finally {
+      setIsBooking(false);
+    }
+  };
+
+
+  const renderStepContent = () => {
+    switch (step) {
+      case 1:
+        return (
+          <div className="center-selection">
+            <h2>{t('select_medical_center')}</h2>
+            <div className="center-list">
+              {centers.map(center => (
+                <div 
+                  key={center.id} 
+                  className={`center-card ${selectedCenter?.id === center.id ? 'selected' : ''}`}
+                  onClick={() => fetchDoctors(center)}
+                >
+                  <h3>{center.name}</h3>
+                  <p className="address">{center.address}</p>
+                  <div className="center-meta">
+                    <span className="rating">⭐ {center.rating || 'N/A'}</span>
+                    <span className="distance">📍 {center.distance || '--'} km</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+        
+      case 2:
+        return (
+          <div className="doctor-selection">
+            <h2>{t('select_doctor')}</h2>
+            <div className="doctor-list">
+              {doctors.map(doctor => (
+                <div 
+                  key={doctor.id}
+                  className={`doctor-card ${selectedDoctor?.id === doctor.id ? 'selected' : ''}`}
+                  onClick={() => {
+                    setSelectedDoctor(doctor);
+                    setStep(3);
+                  }}
+                >
+                  <div className="doctor-avatar">
+                    {doctor.avatar ? (
+                      <img src={doctor.avatar} alt={doctor.name} />
+                    ) : (
+                      <div className="avatar-placeholder">
+                        {doctor.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                    )}
+                  </div>
+                  <div className="doctor-info">
+                    <h3>Dr. {doctor.name}</h3>
+                    <p className="specialty">{doctor.specialty}</p>
+                    <div className="doctor-rating">
+                      <span>⭐ {doctor.rating || 'N/A'}</span>
+                      <span className="reviews">({doctor.reviews || 0} {t('reviews')})</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="step-actions">
+              <button 
+                className="btn btn-secondary" 
+                onClick={() => handleStepBack(1)}
+              >
+                {t('back')}
+              </button>
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="date-selection">
+            <h2>{t('select_date')}</h2>
+            <div className="calendar-container">
+              <DatePicker
+                selected={selectedDate}
+                onChange={handleDateChange}
+                minDate={new Date()}
+                maxDate={addDays(new Date(), 30)}
+                inline
+                locale={i18n.language === 'ar' ? ar : enUS}
+                filterDate={isWeekday}
+              />
+            </div>
+            <div className="step-actions">
+              <button 
+                className="btn btn-secondary" 
+                onClick={() => handleStepBack(2)}
+              >
+                {t('back')}
+              </button>
+              <button 
+                className="btn btn-primary" 
+                onClick={fetchAvailableSlots}
+                disabled={!selectedDate}
+              >
+                {t('view_available_slots')}
+              </button>
+            </div>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="time-selection">
+            <h2>{t('select_time')} - {format(selectedDate, 'PPP', { locale: i18n.language === 'ar' ? ar : enUS })}</h2>
+            {availableSlots.length > 0 ? (
+              <div className="time-slots">
+                {availableSlots.map(slot => (
+                  <button
+                    key={slot}
+                    className={`time-slot ${selectedTime === slot ? 'selected' : ''}`}
+                    onClick={() => setSelectedTime(slot)}
+                  >
+                    {slot}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="no-slots">
+                <p>{t('no_available_slots')}</p>
+                <button 
+                  className="btn btn-text"
+                  onClick={() => setSelectedDate(addDays(selectedDate, 1))}
+                >
+                  {t('check_next_day')}
+                </button>
+              </div>
+            )}
+            <div className="step-actions">
+              <button 
+                className="btn btn-secondary" 
+                onClick={() => handleStepBack(3)}
+              >
+                {t('back')}
+              </button>
+              <button 
+                className="btn btn-primary" 
+                onClick={() => setStep(5)}
+                disabled={!selectedTime}
+              >
+                {t('continue')}
+              </button>
+            </div>
+          </div>
+        );
+
+      case 5:
+        return (
+          <div className="confirmation">
+            <h2>{t('confirm_appointment')}</h2>
+            <div className="appointment-summary">
+              <div className="summary-item">
+                <span className="label">{t('medical_center')}:</span>
+                <span className="value">{selectedCenter?.name}</span>
+              </div>
+              <div className="summary-item">
+                <span className="label">{t('doctor')}:</span>
+                <span className="value">Dr. {selectedDoctor?.name}</span>
+              </div>
+              <div className="summary-item">
+                <span className="label">{t('date')}:</span>
+                <span className="value">
+                  {format(selectedDate, 'PPP', { locale: i18n.language === 'ar' ? ar : enUS })}
+                </span>
+              </div>
+              <div className="summary-item">
+                <span className="label">{t('time')}:</span>
+                <span className="value">{selectedTime}</span>
+              </div>
+              <div className="summary-notes">
+                <label htmlFor="notes">{t('additional_notes')}:</label>
+                <textarea
+                  id="notes"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder={t('any_special_requirements')}
+                />
+              </div>
+            </div>
+            <div className="step-actions">
+              <button 
+                className="btn btn-secondary" 
+                onClick={() => handleStepBack(4)}
+              >
+                {t('back')}
+              </button>
+              <button 
+                className="btn btn-primary" 
+                onClick={handleBooking}
+                disabled={isBooking}
+              >
+                {isBooking ? (
+                  <>
+                    <span className="spinner"></span>
+                    {t('booking')}...
+                  </>
+                ) : (
+                  t('confirm_booking')
+                )}
+              </button>
+            </div>
+          </div>
+        );
+
+      default:
+        return <div>{t('invalid_step')}</div>;
+    }
+  };
+
+    default:
+      return <div>{t('invalid_step')}</div>;
+  }
+}
+            className={`step ${step === stepNumber ? 'active' : ''} ${step > stepNumber ? 'completed' : ''}`}
+          >
+            <div className="step-number">{stepNumber}</div>
+            <div className="step-label">
+              {t(`step_${stepNumber}`)}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Main Content */}
+      <div className="appointment-content">
+        {error && (
+          <div className="alert alert-error">
+            <span className="alert-icon">⚠️</span>
+            <span>{error}</span>
+            <button 
+              className="btn btn-text"
+              onClick={() => setError(null)}
+            >
+              {t('dismiss')}
+            </button>
+          </div>
+        )}
+        {renderStepContent()}
+      </div>
+    </div>
+  );
+};
+
+export default AppointmentPage;

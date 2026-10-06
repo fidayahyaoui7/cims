@@ -1,0 +1,16 @@
+{
+  "welcome": "Welcome to our Medical Platform",
+  "loading": "Loading...",
+  "error": "An error occurred",
+  "success": "Success",
+  "back": "Back",
+  "next": "Next",
+  "save": "Save",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "search": "Search",
+  "no_results": "No results found",
+  "required_field": "This field is required",
+  "invalid_email": "Please enter a valid email address",
+  "invalid_phone": "Please enter a valid phone number"
+}

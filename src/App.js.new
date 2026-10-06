@@ -1,0 +1,408 @@
+import React, { Suspense, lazy, useEffect, useState, useCallback } from 'react';
+import { Routes, Route, Navigate, useLocation, BrowserRouter } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import 'leaflet/dist/leaflet.css';
+import './styles/theme.css';
+
+// Context
+import { useAuth } from './contexts/AuthContext';
+import { BookingProvider } from './contexts/BookingContext';
+
+// Lazy load pages for better performance
+const LoginPage = lazy(() => import('./components/auth/LoginPage'));
+const RegisterPage = lazy(() => import('./components/auth/RegisterPage'));
+const SearchPage = lazy(() => import('./pages/SearchPage'));
+const CenterDetailPageNew = lazy(() => import('./pages/CenterDetailPageNew'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const HelpPage = lazy(() => import('./pages/HelpPage'));
+const CityPage = lazy(() => import('./pages/CityPage'));
+const MapPage = lazy(() => import('./pages/MapPage'));
+const UnifiedHospitalsPage = lazy(() => import('./pages/UnifiedHospitalsPage'));
+const TunisianHospitalsPage = lazy(() => import('./pages/TunisianHospitalsPage'));
+const CharlesNicollePage = lazy(() => import('./pages/CharlesNicollePage'));
+const CentersPage = lazy(() => import('./pages/CentersPage'));
+const HospitalsListPage = lazy(() => import('./pages/HospitalsListPage'));
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
+const OHIFViewerPage = lazy(() => import('./pages/OHIFViewerPage'));
+const RadiologyInfoHomePage = lazy(() => import('./pages/RadiologyInfoHomePage'));
+const AuthLayout = lazy(() => import('./components/layout/AuthLayout'));
+const HomePage = lazy(() => import('./HomePage'));
+const AppointmentBookingPage = lazy(() => import('./pages/AppointmentBookingPage'));
+const AppointmentsListPage = lazy(() => import('./pages/AppointmentsListPage'));
+const MessagesPage = lazy(() => import('./pages/MessagesPage'));
+
+// Booking Wizard pages
+const ExamSelection = lazy(() => import('./pages/booking/ExamSelection'));
+const RegionSelection = lazy(() => import('./pages/booking/RegionSelection'));
+const CenterSelection = lazy(() => import('./pages/booking/CenterSelection'));
+const DateTimeSelection = lazy(() => import('./pages/booking/DateTimeSelection'));
+const PatientInfo = lazy(() => import('./pages/booking/PatientInfo'));
+const Confirmation = lazy(() => import('./pages/booking/Confirmation'));
+const PrefillCenterRoute = lazy(() => import('./pages/booking/PrefillCenterRoute'));
+
+// Patient Dashboard Pages
+const PatientDashboard = lazy(() => import('./pages/patient/DashboardPage'));
+const PatientAppointments = lazy(() => import('./pages/patient/AppointmentsPage'));
+const PatientMessages = lazy(() => import('./pages/patient/MessagesPage'));
+const PatientMedicalRecords = lazy(() => import('./pages/patient/MedicalRecordsPage'));
+const PatientHealthTracker = lazy(() => import('./pages/patient/HealthTrackerPage'));
+const PatientFavorites = lazy(() => import('./pages/patient/FavoritesPage'));
+const PatientProfile = lazy(() => import('./pages/patient/ProfilePage'));
+const PatientSettings = lazy(() => import('./pages/patient/SettingsPage'));
+const BookAppointmentPage = lazy(() => import('./pages/patient/BookAppointmentPage'));
+
+// Components
+const Layout = lazy(() => import('./components/layout/Layout'));
+const PatientLayout = lazy(() => import('./components/layout/PatientLayout'));
+const DashboardRouter = lazy(() => import('./components/dashboard/DashboardRouter'));
+const ProtectedPatientRoute = lazy(() => import('./components/routes/ProtectedPatientRoute'));
+
+// Loading component for Suspense fallback
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
+);
+
+// Error Boundary to surface runtime errors in routing tree
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, info) {
+    console.error('ErrorBoundary caught an error:', error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[50vh] p-6 text-center">
+          <h1 className="text-2xl font-semibold mb-2">Something went wrong</h1>
+          <p className="text-sm opacity-80 mb-4">An unexpected error occurred while rendering this page.</p>
+          <button
+            onClick={() => this.setState({ hasError: false, error: null })}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// Wrapper for patient routes with authentication
+const PatientRoute = ({ children }) => {
+  return (
+    <ProtectedPatientRoute>
+      {children}
+    </ProtectedPatientRoute>
+  );
+};
+
+// Theme configuration
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+    background: {
+      default: '#f5f5f5',
+    },
+  },
+  typography: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    h1: {
+      fontWeight: 500,
+    },
+    h2: {
+      fontWeight: 500,
+    },
+  },
+});
+
+// Auth wrapper component to handle authentication state
+const AuthWrapper = ({ children }) => {
+  const location = useLocation();
+  const { isAuthenticated, checkAuth } = useAuth();
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const verifyAuth = async () => {
+      try {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await checkAuth();
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        localStorage.removeItem('access');
+        localStorage.removeItem('refresh');
+        localStorage.removeItem('user');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    verifyAuth();
+  }, [checkAuth, location]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return children;
+};
+
+// Public route wrapper - Only for unauthenticated users
+const PublicRoute = ({ children }) => {
+  const token = localStorage.getItem('access') || localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+  const location = useLocation();
+  
+  if (token || user) {
+    const resolvedRole = (user?.role || user?.type || user?.userType || 'patient').toLowerCase();
+    const profilePath = `/dashboard/${resolvedRole}/profile`;
+    return <Navigate to={profilePath} state={{ from: location }} replace />;
+  }
+  
+  return children;
+};
+
+// Protected route wrapper - Only for authenticated users
+const ProtectedRoute = ({ children, roles = [] }) => {
+  const token = localStorage.getItem('access') || localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+  const location = useLocation();
+  
+  if (!token && !user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  
+  if (roles.length > 0) {
+    const userRole = (user?.role || user?.userType || user?.type || '').toLowerCase();
+    if (!userRole || !roles.includes(userRole)) {
+      return <Navigate to="/unauthorized" state={{ from: location }} replace />;
+    }
+  }
+  
+  return children;
+};
+
+function App() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isRTL, setIsRTL] = useState(false);
+  const location = useLocation();
+  
+  const toggleDarkMode = useCallback(() => {
+    setIsDarkMode(prev => !prev);
+  }, []);
+  
+  const isAuthRoute = ['/login', '/register', '/forgot-password'].includes(location.pathname);
+  const isPatientRoute = location.pathname.startsWith('/patient');
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('i18nextLng') || 'fr';
+    const isRTL = savedLanguage === 'ar';
+    document.documentElement.lang = savedLanguage;
+    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+    setIsRTL(isRTL);
+  }, []);
+
+  useEffect(() => {
+    const routeTitles = {
+      '/': 'Home',
+      '/search': 'Search',
+      '/patient/dashboard': 'Dashboard',
+    };
+    
+    const handler = (lng) => {
+      const isRTL = ['ar'].includes(lng);
+      document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+      setIsRTL(isRTL);
+    };
+    
+    i18n.on('languageChanged', handler);
+    
+    const currentTitle = routeTitles[location.pathname] || 'Medical App';
+    document.title = `${currentTitle} | Medical Platform`;
+    
+    return () => {
+      i18n.off('languageChanged', handler);
+    };
+  }, [location]);
+
+  const renderContent = () => {
+    if (isPatientRoute) {
+      return (
+        <PatientLayout>
+          <main className="flex-grow patient-route">
+            <Suspense fallback={<LoadingSpinner />}>
+              <Routes>
+                <Route path="/patient" element={<PatientDashboard />} />
+                <Route path="/patient/appointments" element={<PatientAppointments />} />
+                <Route path="/patient/messages" element={<PatientMessages />} />
+                <Route path="/patient/medical-records" element={<PatientMedicalRecords />} />
+                <Route path="/patient/health-tracker" element={<PatientHealthTracker />} />
+                <Route path="/patient/favorites" element={<PatientFavorites />} />
+                <Route path="/patient/profile" element={<PatientProfile />} />
+                <Route path="/patient/settings" element={<PatientSettings />} />
+                <Route path="/patient/book-appointment" element={<BookAppointmentPage />} />
+              </Routes>
+            </Suspense>
+          </main>
+        </PatientLayout>
+      );
+    }
+
+    if (isAuthRoute) {
+      return (
+        <main className="flex-grow bg-gray-50">
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              <Route path="/login" element={
+                <AuthLayout>
+                  <LoginPage />
+                </AuthLayout>
+              } />
+              <Route path="/register" element={
+                <AuthLayout>
+                  <RegisterPage />
+                </AuthLayout>
+              } />
+              <Route path="/forgot-password" element={
+                <AuthLayout>
+                  <ForgotPasswordPage />
+                </AuthLayout>
+              } />
+            </Routes>
+          </Suspense>
+        </main>
+      );
+    }
+
+    return (
+      <>
+        <Layout isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} isRTL={isRTL} />
+        <main className="flex-grow">
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/centers/:id" element={<CenterDetailPageNew />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/help" element={<HelpPage />} />
+              <Route path="/city/:city" element={<CityPage />} />
+              <Route path="/map" element={<MapPage />} />
+              <Route path="/hospitals" element={<HospitalsListPage />} />
+              <Route path="/hospitals/unified" element={<UnifiedHospitalsPage />} />
+              <Route path="/hospitals/tunisia" element={<TunisianHospitalsPage />} />
+              <Route path="/centers" element={<CentersPage />} />
+              <Route path="/radiology-info" element={<RadiologyInfoHomePage />} />
+              <Route path="/charles-nicolle" element={<CharlesNicollePage />} />
+
+              {/* Auth Routes */}
+              <Route path="/login" element={
+                <PublicRoute>
+                  <AuthLayout>
+                    <LoginPage />
+                  </AuthLayout>
+                </PublicRoute>
+              } />
+              <Route path="/register" element={
+                <PublicRoute>
+                  <AuthLayout>
+                    <RegisterPage />
+                  </AuthLayout>
+                </PublicRoute>
+              } />
+              <Route path="/forgot-password" element={
+                <PublicRoute>
+                  <AuthLayout>
+                    <ForgotPasswordPage />
+                  </AuthLayout>
+                </PublicRoute>
+              } />
+
+              {/* Protected Routes */}
+              <Route path="/appointments" element={
+                <ProtectedRoute>
+                  <AppointmentsListPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/messages" element={
+                <ProtectedRoute>
+                  <MessagesPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/book/:centerId" element={
+                <ProtectedRoute>
+                  <AppointmentBookingPage />
+                </ProtectedRoute>
+              } />
+
+              {/* Book Wizard Routes */}
+              <Route path="/book-wizard" element={
+                <BookingProvider>
+                  <Layout isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} isRTL={isRTL}>
+                    <Routes>
+                      <Route index element={<ExamSelection />} />
+                      <Route path="region" element={<RegionSelection />} />
+                      <Route path="center" element={<CenterSelection />} />
+                      <Route path="datetime" element={<DateTimeSelection />} />
+                      <Route path="patient-info" element={<PatientInfo />} />
+                      <Route path="confirmation" element={<Confirmation />} />
+                      <Route path="prefill/:centerId" element={<PrefillCenterRoute />} />
+                    </Routes>
+                  </Layout>
+                </BookingProvider>
+              } />
+
+              {/* Catch all route */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
+        </main>
+      </>
+    );
+  };
+
+  return (
+    <I18nextProvider i18n={i18n}>
+      <ThemeProvider theme={theme}>
+        <AuthWrapper>
+          <BookingProvider>
+            <ErrorBoundary>
+              <CssBaseline />
+              <div className={`app ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                {renderContent()}
+                <ToastContainer 
+                  position={isRTL ? 'top-left' : 'top-right'} 
+                  rtl={isRTL} 
+                  autoClose={5000} 
+                  theme={isDarkMode ? 'dark' : 'light'} 
+                />
+              </div>
+            </ErrorBoundary>
+          </BookingProvider>
+        </AuthWrapper>
+      </ThemeProvider>
+    </I18nextProvider>
+  );
+}
+
+export default App;

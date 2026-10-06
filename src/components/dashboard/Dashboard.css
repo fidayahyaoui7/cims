@@ -1,0 +1,265 @@
+/* Dashboard Layout */
+.dashboard {
+  padding: var(--space-5);
+  text-align: start;
+  direction: ltr;
+}
+
+/* RTL Support */
+[dir='rtl'] .dashboard {
+  text-align: right;
+  direction: rtl;
+}
+
+.dashboard-header {
+  background: var(--surface-color);
+  border-radius: var(--border-radius-large);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-5);
+  box-shadow: var(--shadow-medium);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  text-align: start;
+}
+
+[dir='rtl'] .dashboard-header {
+  text-align: right;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.user-info span {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.dashboard-tabs {
+  display: flex;
+  background: var(--surface-color);
+  border-radius: var(--border-radius-large);
+  padding: var(--space-2);
+  margin-bottom: var(--space-5);
+  box-shadow: var(--shadow-small);
+  gap: var(--space-2);
+  direction: ltr; /* Force LTR for tabs to maintain consistent layout */
+}
+
+[dir='rtl'] .dashboard-tabs {
+  /* Maintain LTR direction for tabs in RTL mode */
+  direction: ltr;
+}
+
+.tab {
+  flex: 1;
+  padding: var(--space-3);
+  border: none;
+  background: transparent;
+  border-radius: var(--border-radius-medium);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition-medium);
+  text-align: center;
+}
+
+.tab:hover {
+  background: var(--background-color);
+  color: var(--primary-color);
+}
+
+.tab.active {
+  background: var(--primary-color);
+  color: var(--text-on-primary);
+  box-shadow: var(--shadow-medium);
+}
+
+.dashboard-content {
+  background: var(--surface-color);
+  border-radius: var(--border-radius-large);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-medium);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.section-header h2, .section-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.card {
+  background: var(--surface-color-dark);
+  border-radius: var(--border-radius-large);
+  padding: var(--space-4);
+  border: 1px solid var(--border-color);
+  transition: var(--transition-medium);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-medium);
+}
+
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.stat-card {
+  background: var(--surface-color);
+  color: var(--text-primary);
+  padding: var(--space-4);
+  border-radius: var(--border-radius-large);
+  text-align: center;
+  border: 1px solid var(--border-color);
+  transition: var(--transition-medium);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-medium);
+  border-color: var(--primary-color);
+}
+
+.stat-card h3 {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.stat-number {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.appointment-card, .patient-card, .medical-record-card, .center-card {
+  background: var(--surface-color);
+  border-radius: var(--border-radius-large);
+  padding: var(--space-4);
+  border-left: 5px solid var(--primary-color);
+  box-shadow: var(--shadow-small);
+  transition: var(--transition-medium);
+}
+
+.appointment-card:hover, .patient-card:hover, .medical-record-card:hover, .center-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-medium);
+}
+
+.appointment-header, .patient-header, .record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-3);
+  gap: var(--space-3);
+}
+
+.appointment-info h4, .patient-info h4 {
+  margin-bottom: var(--space-2);
+  font-size: 1.2rem;
+}
+
+.appointment-info p, .patient-info p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--border-radius-large);
+  color: var(--text-on-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-confirmed { background-color: var(--success-color); }
+.status-pending { background-color: var(--accent-color); color: var(--text-primary); }
+.status-cancelled { background-color: var(--error-color); }
+.status-completed { background-color: var(--primary-color); }
+
+.appointment-actions, .patient-actions, .record-actions {
+  margin-top: var(--space-4);
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.nearby-centers-section .centers-list {
+  margin-top: var(--space-4);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-4);
+}
+
+.center-card {
+  border-color: var(--success-color);
+}
+
+/* RTL Support for Form Elements */
+[dir='rtl'] input,
+[dir='rtl'] textarea,
+[dir='rtl'] select {
+  text-align: right;
+  direction: rtl;
+}
+
+/* RTL Support for Cards and Content */
+[dir='rtl'] .card {
+  text-align: right;
+}
+
+[dir='rtl'] .card-header {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .card-actions {
+  justify-content: flex-start;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: var(--space-4);
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .dashboard-tabs {
+    flex-direction: column;
+  }
+}
+

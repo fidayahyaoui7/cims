@@ -1,0 +1,270 @@
+.appointments-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  background: linear-gradient(135deg, #4a6fa5, #2c3e50);
+  color: white;
+  padding: 20px 0;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.logo i {
+  margin-right: 10px;
+  font-size: 28px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-avatar {
+  width: 45px;
+  height: 45px;
+  background-color: #3498db;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  color: white;
+}
+
+.nav-tabs {
+  display: flex;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
+.nav-item {
+  flex: 1;
+  text-align: center;
+  padding: 18px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  color: #555;
+  border-bottom: 3px solid transparent;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.nav-item:hover {
+  background-color: #f8f9ff;
+  color: #3498db;
+}
+
+.nav-item.active {
+  color: #3498db;
+  border-bottom: 3px solid #3498db;
+  background-color: #f8f9ff;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 25px;
+}
+
+.sidebar {
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  height: fit-content;
+}
+
+.sidebar-widget {
+  margin-bottom: 30px;
+}
+
+.sidebar-widget h3 {
+  color: #3498db;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.main-content {
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.card {
+  background: #f9faff;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-left: 4px solid #3498db;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.card-title {
+  font-weight: 600;
+  color: #3498db;
+  margin: 0;
+}
+
+.card-content {
+  color: #555;
+}
+
+.appointment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.appointment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.appointment-item:last-child {
+  border-bottom: none;
+}
+
+.appointment-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.appointment-time {
+  background: #e8f4ff;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  color: #3498db;
+  min-width: 80px;
+  text-align: center;
+}
+
+.appointment-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.appointment-actions button {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  white-space: nowrap;
+}
+
+.appointment-actions button:hover {
+  background: #2980b9;
+}
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-primary {
+  background: #e8f4ff;
+  color: #3498db;
+}
+
+.badge-success {
+  background: #e7f9ed;
+  color: #27ae60;
+}
+
+.badge-warning {
+  background: #fef5e7;
+  color: #f39c12;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 5px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.btn-primary {
+  background: #3498db;
+  color: white;
+  border: none;
+}
+
+.btn-outline-primary {
+  background: white;
+  color: #3498db;
+  border: 1px solid #3498db;
+}
+
+.btn-primary:hover {
+  background: #2980b9;
+}
+
+.btn-outline-primary:hover {
+  background: #f8f9ff;
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+  
+  .nav-tabs {
+    flex-wrap: wrap;
+  }
+  
+  .nav-item {
+    flex: 1 0 50%;
+  }
+}

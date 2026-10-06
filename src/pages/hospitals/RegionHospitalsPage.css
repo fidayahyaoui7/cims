@@ -1,0 +1,259 @@
+.region-hospitals {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.back-button {
+  margin-bottom: 2rem;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: #3498db;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.5rem 0;
+}
+
+.btn-back svg {
+  margin-right: 0.5rem;
+}
+
+.region-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.region-header h1 {
+  font-size: 2.2rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.region-header p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  color: #95a5a6;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.filter-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.filter-select {
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: white;
+  cursor: pointer;
+  min-width: 150px;
+}
+
+.hospitals-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.hospital-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.hospital-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hospital-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 6px 6px 0 0;
+}
+
+.hospital-header:hover {
+  background-color: rgba(52, 152, 219, 0.05);
+}
+
+.hospital-header h3 {
+  transition: color 0.2s ease;
+}
+
+.hospital-header:hover h3 {
+  color: #3498db;
+}
+
+.hospital-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.hospital-icon.clickable {
+  cursor: pointer;
+}
+
+.hospital-icon.clickable:hover {
+  transform: scale(1.1);
+  opacity: 0.9;
+}
+
+.hospital-icon.public {
+  color: #3498db;
+}
+
+.hospital-icon.university {
+  color: #9b59b6;
+}
+
+.hospital-icon.private {
+  color: #e74c3c;
+}
+
+.hospital-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #2c3e50;
+  line-height: 1.4;
+}
+
+.hospital-details {
+  padding: 1.25rem 1.5rem;
+  flex-grow: 1;
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  color: #34495e;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.detail-icon {
+  color: #7f8c8d;
+  margin-right: 0.75rem;
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.hospital-services {
+  padding: 0.75rem 1.5rem 1.25rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.service-tag {
+  background-color: #f5f5f5;
+  color: #555;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #7f8c8d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hospitals-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-box {
+    width: 100%;
+  }
+  
+  .filter-group {
+    width: 100%;
+  }
+  
+  .filter-select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .region-hospitals {
+    padding: 1rem 0.75rem;
+  }
+  
+  .region-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .hospital-header {
+    padding: 1rem;
+  }
+  
+  .hospital-details {
+    padding: 1rem;
+  }
+}

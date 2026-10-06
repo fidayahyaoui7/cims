@@ -1,0 +1,145 @@
+.booking-steps-container {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.booking-steps-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #2d3748;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.booking-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 0 2rem;
+}
+
+.booking-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0.5rem;
+  border-radius: 50%;
+}
+
+.booking-step:hover:not(.active) {
+  transform: translateY(-5px);
+}
+
+.step-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e2e8f0;
+  color: #718096;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+  border: 2px solid #e2e8f0;
+}
+
+.booking-step.active .step-icon {
+  background: #4299e1;
+  color: white;
+  border-color: #4299e1;
+  transform: scale(1.1);
+  box-shadow: 0 4px 6px rgba(66, 153, 225, 0.3);
+}
+
+.booking-step.completed .step-icon {
+  background: #48bb78;
+  color: white;
+  border-color: #48bb78;
+}
+
+.step-label {
+  font-size: 0.875rem;
+  color: #718096;
+  text-align: center;
+  margin-top: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.booking-step.active .step-label {
+  color: #2d3748;
+  font-weight: 600;
+}
+
+.booking-step.completed .step-label {
+  color: #48bb78;
+}
+
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: #e2e8f0;
+  margin: 0 1rem;
+  position: relative;
+  top: -25px;
+}
+
+.step-connector.completed {
+  background: #48bb78;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .booking-steps {
+    padding: 0 0.5rem;
+  }
+  
+  .step-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .step-label {
+    font-size: 0.75rem;
+  }
+  
+  .step-connector {
+    margin: 0 0.5rem;
+  }
+}
+
+/* RTL Support */
+[dir='rtl'] .booking-step {
+  flex-direction: column-reverse;
+}
+
+[dir='rtl'] .step-label {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+[dir='rtl'] .step-connector {
+  top: 25px;
+}
+
+/* Animation for active step */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.booking-step.active .step-icon {
+  animation: pulse 2s infinite;
+}

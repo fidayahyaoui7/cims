@@ -1,0 +1,95 @@
+.help-page {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.help-page h1 {
+  color: #2c3e50;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.faq-section {
+  margin-bottom: 40px;
+}
+
+.faq-item {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  overflow: hidden;
+}
+
+.faq-question {
+  background: #f8f9fa;
+  padding: 15px 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  color: #2c3e50;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.faq-answer {
+  padding: 20px;
+  background: #fff;
+  border-top: 1px solid #eee;
+  display: none;
+}
+
+.faq-item.active .faq-answer {
+  display: block;
+}
+
+.contact-support {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 8px;
+  margin-top: 30px;
+}
+
+.contact-support h2 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+.contact-methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.contact-method {
+  padding: 15px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.contact-method h3 {
+  color: #3498db;
+  margin-bottom: 10px;
+}
+
+.contact-method p {
+  margin: 5px 0;
+  color: #666;
+}
+
+.contact-method a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.contact-method a:hover {
+  text-decoration: underline;
+}

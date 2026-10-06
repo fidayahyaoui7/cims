@@ -1,0 +1,32 @@
+.map-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--background-color);
+}
+
+.map-page-header {
+  background: var(--surface-color);
+  padding: var(--space-4) var(--space-5);
+  text-align: center;
+  box-shadow: var(--shadow-medium);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 10;
+}
+
+.map-page-header h1 {
+  color: var(--text-primary);
+  margin: 0 0 var(--space-1) 0;
+  font-size: 1.8rem;
+}
+
+.map-page-header p {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.map-content {
+  flex-grow: 1;
+  position: relative;
+}

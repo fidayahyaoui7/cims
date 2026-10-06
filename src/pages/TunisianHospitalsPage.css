@@ -1,0 +1,169 @@
+/* Hospital Detail Styles */
+.hospital-detail-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.back-icon {
+  margin-right: 0.5rem;
+}
+
+.hospital-detail {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.hospital-header {
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--primary-color), #4a6fa5);
+  color: white;
+}
+
+.hospital-header h2 {
+  margin: 0 0 0.5rem;
+  font-size: 2rem;
+}
+
+.hospital-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.hospital-type {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.hospital-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.hospital-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.info-section h3 {
+  margin: 0 0 1rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.info-section p {
+  margin: 0.5rem 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.services-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.service-tag {
+  background: #f0f4f8;
+  color: var(--primary-color);
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.hospital-map {
+  height: 400px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e1e4e8;
+}
+
+.map-placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 2rem;
+}
+
+.map-icon {
+  font-size: 3rem;
+  color: #dee2e6;
+  margin-bottom: 1rem;
+}
+
+.hospital-actions {
+  padding: 0 2rem 2rem;
+  text-align: center;
+}
+
+.emergency {
+  color: #dc3545;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .hospital-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .hospital-map {
+    height: 300px;
+  }
+}
+
+/* RTL Support */
+.rtl .back-button {
+  direction: rtl;
+}
+
+.rtl .back-icon {
+  margin-right: 0;
+  margin-left: 0.5rem;
+  transform: rotate(180deg);
+}
+
+.rtl .info-section h3 {
+  flex-direction: row-reverse;
+}

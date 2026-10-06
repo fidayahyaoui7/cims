@@ -1,0 +1,110 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: medPlatform
+      POSTGRES_USER: med
+      POSTGRES_PASSWORD: medpwd
+    ports: ["5432:5432"]
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  orthanc:
+    image: jodogne/orthanc-plugins:1.12.3
+    ports: ["8042:8042", "4242:4242"]
+    environment:
+      ORTHANC__Name: "Orthanc"
+      ORTHANC__HttpServerEnabled: "true"
+      ORTHANC__HttpPort: 8042
+      ORTHANC__AuthenticationEnabled: "true"
+      ORTHANC__RegisteredUsers: |
+        {
+          "orthanc": "orthancpwd"
+        }
+      ORTHANC__DicomWeb__Enable: "true"
+      ORTHANC__DicomWeb__Root: "/dicom-web/"
+      ORTHANC__DicomWeb__EnableWado: "true"
+      ORTHANC__DicomWeb__EnableStow: "true"
+      ORTHANC__DicomWeb__EnableQido: "true"
+    volumes:
+      - orthanc_data:/var/lib/orthanc/db
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    ports: ["9000:9000", "9001:9001"]
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
+  create-bucket:
+    image: minio/mc:RELEASE.2024-07-15T22-14-36Z
+    depends_on:
+      - minio
+    entrypoint: |
+      /bin/sh -c "
+      until (/usr/bin/mc alias set local http://minio:9000 minio minio123) do echo '...waiting for minio...' && sleep 2; done; 
+      /usr/bin/mc mb -p local/uploads || true;
+      /usr/bin/mc policy set download local/uploads;
+      exit 0;
+      "
+
+  orthanc:
+    image: osimis/orthanc
+    environment:
+      ORTHANC__Name: "Orthanc"
+      ORTHANC__AuthenticationEnabled: "false"
+      DICOM_WEB__Enable: "true"
+      DICOM_WEB__Root: "/dicom-web/"
+    ports:
+      - "8042:8042"
+    volumes:
+      - orthanc_data:/var/lib/orthanc/db
+
+  ohif:
+    image: ohif/viewer:v3.7.0
+    ports:
+      - "3001:80"
+    environment:
+      - APP_CONFIG=/etc/config/default.js
+    volumes:
+      - ./ohif-config.js:/etc/config/default.js:ro
+
+  server-auth:
+    build:
+      context: ./server-auth
+      dockerfile: Dockerfile
+    # If no Dockerfile yet, use image: node:20 and a command to run dev; but recommend adding a Dockerfile.
+    image: local/server-auth:latest
+    depends_on:
+      - db
+      - minio
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      CORS_ORIGIN: http://localhost:3000
+      DATABASE_URL: postgres://postgres:postgres@db:5432/medapp?schema=public
+      JWT_SECRET: change-me-access
+      REFRESH_SECRET: change-me-refresh
+      S3_ENDPOINT: http://minio:9000
+      S3_REGION: us-east-1
+      S3_ACCESS_KEY: minio
+      S3_SECRET_KEY: minio123
+      STORAGE_BUCKET: uploads
+      STORAGE_PREFIX: attachments
+    ports:
+      - "4000:4000"
+    working_dir: /app
+    volumes:
+      - ./server-auth:/app
+    command: sh -c "npm install && npx prisma generate && node src/server.js"
+
+volumes:
+  db_data:
+  minio_data:
+  orthanc_data:

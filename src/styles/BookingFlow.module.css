@@ -1,0 +1,205 @@
+/* Main container */
+.bookingContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  min-height: calc(100vh - 80px);
+  background: #ffffff;
+}
+
+/* Header */
+.bookingHeader {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.bookingHeader h1 {
+  font-size: 2rem;
+  color: #1a365d;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.bookingSubtitle {
+  color: #4a5568;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Progress bar */
+.progressContainer {
+  margin: 2rem 0 3rem;
+  position: relative;
+  padding: 0 2rem;
+}
+
+.progressBar {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.progressStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+
+.stepNumber {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #718096;
+  margin-bottom: 0.5rem;
+  border: 3px solid #ffffff;
+  position: relative;
+  z-index: 2;
+}
+
+.stepNumber.active {
+  background: #4299e1;
+  color: white;
+  border-color: #ebf8ff;
+  box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.2);
+}
+
+.stepNumber.completed {
+  background: #48bb78;
+  color: white;
+  border-color: #f0fff4;
+}
+
+.stepLabel {
+  font-size: 0.85rem;
+  color: #718096;
+  text-align: center;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  position: absolute;
+  bottom: -2rem;
+  white-space: nowrap;
+}
+
+.stepLabel.active {
+  color: #2b6cb0;
+  font-weight: 600;
+}
+
+.progressLine {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #e2e8f0;
+  z-index: 1;
+}
+
+.progressFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #48bb78;
+  transition: width 0.3s ease;
+}
+
+/* Step content */
+.stepContent {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+}
+
+/* Navigation buttons */
+.navigationButtons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+}
+
+.buttonPrimary {
+  background: #4299e1;
+  color: white;
+  border: none;
+}
+
+.buttonPrimary:hover {
+  background: #3182ce;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.buttonPrimary:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.buttonSecondary {
+  background: white;
+  color: #4a5568;
+  border: 1px solid #cbd5e0;
+}
+
+.buttonSecondary:hover {
+  background: #f7fafc;
+  border-color: #a0aec0;
+}
+
+.buttonIcon {
+  margin-right: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .bookingContainer {
+    padding: 1rem 0.5rem;
+  }
+  
+  .bookingHeader h1 {
+    font-size: 1.5rem;
+  }
+  
+  .stepContent {
+    padding: 1.5rem 1rem;
+  }
+  
+  .progressStep {
+    flex: 0 0 33.333%;
+  }
+  
+  .stepLabel {
+    font-size: 0.75rem;
+  }
+}

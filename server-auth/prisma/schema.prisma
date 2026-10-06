@@ -1,0 +1,103 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  PATIENT
+  RADIOLOGIST
+  ADMIN
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  phone         String?  @unique
+  passwordHash  String
+  role          Role     @default(PATIENT)
+  displayName   String?
+  locale        String   @default("fr")
+  emailVerified Boolean  @default(false)
+  mfaEnabled    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  messages      Message[]
+  memberships   ConversationMember[]
+  tokens        RefreshToken[]
+  resets        PasswordReset[]
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Conversation {
+  id        String                @id @default(cuid())
+  title     String?
+  isDirect  Boolean               @default(false)
+  createdAt DateTime              @default(now())
+  messages  Message[]
+  members   ConversationMember[]
+}
+
+model ConversationMember {
+  id             String        @id @default(cuid())
+  conversationId String
+  userId         String
+  joinedAt       DateTime      @default(now())
+  conversation   Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+}
+
+model Message {
+  id             String        @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String
+  contentType    String        @default("text/plain")
+  hasAttachments Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  readAt         DateTime?
+  conversation   Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User          @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  attachments    Attachment[]
+}
+
+model Attachment {
+  id         String   @id @default(cuid())
+  messageId  String
+  objectKey  String
+  mimeType   String?
+  size       Int?
+  createdAt  DateTime @default(now())
+  message    Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+}
+
+model StudyLink {
+  id               String        @id @default(cuid())
+  conversationId   String
+  studyInstanceUID String
+  conversation     Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}

@@ -1,0 +1,316 @@
+/* Booking Flow Components */
+
+/* Progress Bar */
+.booking-progress {
+  max-width: 800px;
+  margin: 0 auto 3rem;
+  position: relative;
+}
+
+.progress-bar {
+  height: 6px;
+  background-color: var(--border-color);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.progress {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  max-width: 150px;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background-color: var(--border-color);
+  z-index: -1;
+}
+
+.step.active:not(:last-child)::after {
+  background-color: var(--primary-color);
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--bg-light);
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  transition: var(--transition);
+}
+
+.step.active .step-number {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.step.completed .step-number {
+  background-color: var(--success-color);
+  border-color: var(--success-color);
+  color: white;
+}
+
+.step-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: center;
+  transition: var(--transition);
+}
+
+.step.active .step-label,
+.step.completed .step-label {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* Step Content */
+.step-content {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  transition: var(--transition);
+}
+
+.step-content:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.step-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.step-subtitle {
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+/* Navigation Buttons */
+.booking-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.btn-prev,
+.btn-next {
+  min-width: 120px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-prev {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-prev:hover {
+  background-color: var(--bg-light);
+  border-color: var(--text-secondary);
+}
+
+.btn-next {
+  background-color: var(--primary-color);
+  color: white;
+  border: 1px solid var(--primary-color);
+}
+
+.btn-next:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+/* Confirmation Page */
+.confirmation-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.confirmation-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.confirmation-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #d1fae5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: var(--success-color);
+  font-size: 2.5rem;
+}
+
+.confirmation-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.confirmation-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.details-card {
+  background-color: var(--bg-light);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.details-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detail-item {
+  display: flex;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 140px;
+}
+
+.detail-value {
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+.confirmation-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .step {
+    max-width: none;
+  }
+  
+  .step-label {
+    font-size: 0.7rem;
+  }
+  
+  .step-content {
+    padding: 1.5rem 1rem;
+  }
+  
+  .confirmation-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .detail-item {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .detail-label {
+    min-width: 100%;
+  }
+  
+  .confirmation-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .btn-prev,
+  .btn-next {
+    width: 100%;
+  }
+}
+
+/* RTL Support */
+[dir='rtl'] {
+  .step:not(:last-child)::after {
+    left: auto;
+    right: 50%;
+  }
+  
+  .detail-item {
+    flex-direction: row-reverse;
+  }
+  
+  .detail-label {
+    text-align: right;
+  }
+  
+  .confirmation-actions {
+    flex-direction: row-reverse;
+  }
+}

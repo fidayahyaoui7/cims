@@ -1,0 +1,16 @@
+{
+  "welcome": "Bienvenue sur notre Plateforme Médicale",
+  "loading": "Chargement...",
+  "error": "Une erreur est survenue",
+  "success": "Succès",
+  "back": "Retour",
+  "next": "Suivant",
+  "save": "Enregistrer",
+  "cancel": "Annuler",
+  "confirm": "Confirmer",
+  "search": "Rechercher",
+  "no_results": "Aucun résultat trouvé",
+  "required_field": "Ce champ est requis",
+  "invalid_email": "Veuillez entrer une adresse email valide",
+  "invalid_phone": "Veuillez entrer un numéro de téléphone valide"
+}
